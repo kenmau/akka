@@ -5,7 +5,7 @@ import akka.actor.typed.ActorSystem;
 import java.io.IOException;
 public class AkkaQuickstart {
   public static void main(String[] args) {
-    //#actor-system
+    //#actor-system - Creates the Guardian Actor
     final ActorSystem<GreeterMain.SayHello> greeterMain = ActorSystem.create(GreeterMain.create(), "helloakka");
     //#actor-system
 

@@ -9,9 +9,10 @@ import java.util.Objects;
 // #greeter
 public class Greeter extends AbstractBehavior<Greeter.Greet> {
 
+  // Message: Greet, command the Actor to greet someone
   public static final class Greet {
-    public final String whom;
-    public final ActorRef<Greeted> replyTo;
+    public final String whom; // to greet
+    public final ActorRef<Greeted> replyTo; // so the Greeter knows who to send the confirmation message to
 
     public Greet(String whom, ActorRef<Greeted> replyTo) {
       this.whom = whom;
@@ -19,6 +20,7 @@ public class Greeter extends AbstractBehavior<Greeter.Greet> {
     }
   }
 
+  // Message: Greeted (A reply from the Greeter to confirm greeting has happened)
   public static final class Greeted {
     public final String whom;
     public final ActorRef<Greet> from;
@@ -63,12 +65,13 @@ public class Greeter extends AbstractBehavior<Greeter.Greet> {
 
   @Override
   public Receive<Greet> createReceive() {
+    // Factory
     return newReceiveBuilder().onMessage(Greet.class, this::onGreet).build();
   }
 
   private Behavior<Greet> onGreet(Greet command) {
     getContext().getLog().info("Hello {}!", command.whom);
-    //#greeter-send-message
+    //#greeter-send-message - asynchronous message that doesn't block the caller's thread
     command.replyTo.tell(new Greeted(command.whom, getContext().getSelf()));
     //#greeter-send-message
     return this;

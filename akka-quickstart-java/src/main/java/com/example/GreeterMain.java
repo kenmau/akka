@@ -4,8 +4,10 @@ import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.*;
 
+// Guardian Actor
 public class GreeterMain extends AbstractBehavior<GreeterMain.SayHello> {
 
+    // Message: SayHello (message to the GreeterMain to start)
     public static class SayHello {
         public final String name;
 
@@ -22,7 +24,9 @@ public class GreeterMain extends AbstractBehavior<GreeterMain.SayHello> {
 
     private GreeterMain(ActorContext<SayHello> context) {
         super(context);
-        //#create-actors
+        //#create-actors - cannot create using new, use factory spawn methods
+        // returns a reference to an Actor instance, not the actual Actor instance
+        // this indirection adds flexibility in distributed system
         greeter = context.spawn(Greeter.create(), "greeter");
         //#create-actors
     }

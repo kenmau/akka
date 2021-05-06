@@ -10,6 +10,8 @@ public class GreeterBot extends AbstractBehavior<Greeter.Greeted> {
     }
 
     private final int max;
+
+    // no need to "synchronized" or "AtomicInteger". The actor processes one message at a time.
     private int greetingCounter;
 
     private GreeterBot(ActorContext<Greeter.Greeted> context, int max) {
