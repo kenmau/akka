@@ -1,6 +1,6 @@
 package com.example;
 
-import akka.actor.ActorSystem;
+import akka.actor.typed.ActorSystem;
 import akka.actor.typed.ActorRef;
 
 public class ActorHierarchyExperiments {
