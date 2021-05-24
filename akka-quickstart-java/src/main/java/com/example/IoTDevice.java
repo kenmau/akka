@@ -52,6 +52,7 @@ public class IoTDevice extends AbstractBehavior<IoTDevice.Command> {
     @Override
     public Receive<Command> createReceive() {
         return newReceiveBuilder()
+                .onMessage(RecordTemperature.class, this::onRecordTemperature)
                 .onMessage(ReadTemperature.class, this::onReadTemperature)
                 .onSignal(PostStop.class, signal -> onPostStop())
                 .build();
@@ -61,8 +62,39 @@ public class IoTDevice extends AbstractBehavior<IoTDevice.Command> {
         return Behaviors.setup(context -> new IoTDevice(context, groupId, deviceId));
     }
 
+    // Write Temperature
+    public static final class RecordTemperature implements Command {
+        final long requestId;
+        final double value;
+        final ActorRef<TemperatureRecorded> replyTo;
+
+        public RecordTemperature(long requestId, double value, ActorRef<TemperatureRecorded> replyTo) {
+            this.requestId = requestId;
+            this.value = value;
+            this.replyTo = replyTo;
+        }
+    }
+
+    public static final class TemperatureRecorded {
+        final long requestId;
+
+        public TemperatureRecorded(long requestId) {
+            this.requestId = requestId;
+        }
+    }
+
+
+    // Message Handlers
     private Behavior<Command> onReadTemperature(ReadTemperature r) {
+        getContext().getLog().info("Read temperature reading {} with {}", lastTemperatureReading, r.requestId);
         r.replyTo.tell(new RespondTemperature(r.requestId, lastTemperatureReading));
+        return this;
+    }
+
+    private Behavior<Command> onRecordTemperature(RecordTemperature r) {
+        getContext().getLog().info("Recorded temperature reading {} with {}", r.value, r.requestId);
+        lastTemperatureReading = Optional.of(r.value);
+        r.replyTo.tell(new TemperatureRecorded(r.requestId));
         return this;
     }
 
@@ -70,5 +102,6 @@ public class IoTDevice extends AbstractBehavior<IoTDevice.Command> {
         getContext().getLog().info("Device actor {}-{} stopped", groupId, deviceId);
         return this;
     }
+
 
 }

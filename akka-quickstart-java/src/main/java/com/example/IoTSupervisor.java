@@ -24,7 +24,7 @@ public class IoTSupervisor extends AbstractBehavior<Void> {
     }
 
     private IoTSupervisor onPostStop() {
-        getContext().getLog().info("IoT Application stoppoed");
+        getContext().getLog().info("IoT Application stopped");
         return this;
     }
 }
